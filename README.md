@@ -1,4 +1,5 @@
 To run locally:
 
-npm install (one time)
-npm start
+`npm install`
+
+`npm start`
