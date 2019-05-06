@@ -11,7 +11,7 @@ class Channels extends React.Component {
     channels: [],
     channelName: "",
     channelDetail: "",
-    channelsRef: firebase.firestore().collection("channels"),
+    channelsRef: firebase.database().ref("channels"),
     modal: false,
     firstLoad: true
   };

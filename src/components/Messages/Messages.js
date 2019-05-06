@@ -1,10 +1,10 @@
-import React from "react"
-import { Segment, Comment } from "semantic-ui-react"
-import firebase from "../../firebase"
+import React from "react";
+import { Segment, Comment } from "semantic-ui-react";
+import firebase from "../../firebase";
 
-import MessagesHeader from "./MessagesHeader"
-import MessageForm from "./MessageForm"
-import Message from "./Message"
+import MessagesHeader from "./MessagesHeader";
+import MessageForm from "./MessageForm";
+import Message from "./Message";
 
 class Messages extends React.Component {
   state = {
@@ -14,30 +14,39 @@ class Messages extends React.Component {
     channel: this.props.currentChannel,
     user: this.props.currentUser,
     progressBar: false
-  }
+  };
 
   componentDidMount = () => {
-    const { channel, user } = this.state
+    const { channel, user } = this.state;
 
     if (channel && user) {
-      this.addListeners(channel.id)
+      this.addListeners(channel.id);
     }
-  }
+  };
+
+  componentWillUnmount = () => {
+    this.removeListeners();
+  };
 
   addListeners = channelId => {
-    this.addMessageListener(channelId)
-  }
+    this.addMessageListener(channelId);
+  };
 
   addMessageListener = channelId => {
-    let loadedMessages = []
+    let loadedMessages = [];
     this.state.messagesRef.child(channelId).on("child_added", snap => {
-      loadedMessages.push(snap.val())
+      loadedMessages.push(snap.val());
       this.setState({
         messages: loadedMessages,
         messagesLoading: false
-      })
-    })
-  }
+      });
+    });
+  };
+
+  removeListeners = () => {
+    const { messagesRef } = this.state;
+    messagesRef.off();
+  };
 
   displayMessages = messages =>
     messages.length > 0 &&
@@ -47,16 +56,16 @@ class Messages extends React.Component {
         message={message}
         user={this.state.user}
       />
-    ))
+    ));
 
   isProgressBarVisible = percent => {
     if (percent > 0) {
-      this.setState({ progressBar: true })
+      this.setState({ progressBar: true });
     }
-  }
+  };
 
   render() {
-    const { messagesRef, messages, channel, user, progressBar } = this.state
+    const { messagesRef, messages, channel, user, progressBar } = this.state;
 
     return (
       <React.Fragment>
@@ -77,8 +86,8 @@ class Messages extends React.Component {
           isProgressBarVsible={this.isProgressBarVisible}
         />
       </React.Fragment>
-    )
+    );
   }
 }
 
-export default Messages
+export default Messages;
