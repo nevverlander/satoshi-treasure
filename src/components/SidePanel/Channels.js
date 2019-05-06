@@ -28,15 +28,21 @@ class Channels extends React.Component {
   addListeners = () => {
     let loadedChannels = [];
     const { channelsRef } = this.state;
-    channelsRef.on("child_added", snap => {
-      loadedChannels.push(snap.val());
-      this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
+    this.unsubscribe = channelsRef.onSnapshot(snap => {
+      snap.docChanges().forEach(function(change) {
+        if (change.type === "added") {
+          console.log("New channel added: ", change.doc.data());
+          loadedChannels.push(change.doc.data());
+        }
+      });
+      this.setState({ channels: loadedChannels }, () => {
+        this.setFirstChannel();
+      });
     });
   };
 
   removeListeners = () => {
-    const { channelsRef } = this.state;
-    channelsRef.off();
+    this.unsubscribe();
   };
 
   handleSubmit = event => {
@@ -52,10 +58,9 @@ class Channels extends React.Component {
 
   addChannel = () => {
     const { channelsRef, channelName, channelDetail, user } = this.state;
-    const key = channelsRef.push().key;
-
+    const newChannelRef = channelsRef.doc();
     const newChannel = {
-      id: key,
+      id: newChannelRef.id,
       name: channelName,
       details: channelDetail,
       createdBy: {
@@ -64,9 +69,8 @@ class Channels extends React.Component {
       }
     };
 
-    channelsRef
-      .child(key)
-      .update(newChannel)
+    newChannelRef
+      .set(newChannel)
       .then(() => {
         this.setState({
           channelName: "",
