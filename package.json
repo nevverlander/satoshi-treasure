@@ -1,0 +1,42 @@
+{
+  "name": "react-slack-cloneudemy",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "src/index.js",
+  "dependencies": {
+    "firebase": "latest",
+    "history": "latest",
+    "md5": "latest",
+    "mime-types": "2.1.21",
+    "moment": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-fontawesome": "1.6.1",
+    "react-redux": "latest",
+    "react-router-dom": "latest",
+    "react-scripts": "latest",
+    "redux": "latest",
+    "redux-devtools-extension": "2.13.7",
+    "semantic-ui-css": "2.4.1",
+    "semantic-ui-react": "0.83.0",
+    "uuid": "3.3.2"
+  },
+  "devDependencies": {
+    "esformatter-jsx": "^8.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-react": "^7.13.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
