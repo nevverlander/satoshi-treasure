@@ -1,41 +1,44 @@
-import React from "react"
-import mime from "mime-types"
-import { Modal, Button, Icon, Input } from "semantic-ui-react"
+import React from "react";
+import mime from "mime-types";
+import { Modal, Button, Icon, Input } from "semantic-ui-react";
 
 class FileModal extends React.Component {
   state = {
     file: null,
-    authorized: ["image/jpeg", "image/png"]
-  }
+    authorized: ["image/jpeg", "image/png", "image/gif"]
+  };
 
   addFile = event => {
-    const file = event.target.files[0]
+    const file = event.target.files[0];
     if (file) {
-      this.setState({ file })
+      this.setState({ file });
     }
-  }
+  };
 
   sendFile = () => {
-    const { file } = this.state
-    const { uploadFile, closeModal } = this.props
+    const { file } = this.state;
+    const { uploadFile, closeModal } = this.props;
 
     if (file !== null) {
       if (this.isAuthorized(file.name)) {
-        const metadata = { contentType: mime.lookup(file.name) }
-        uploadFile(file, metadata)
-        closeModal()
-        this.clearFile()
+        const metadata = { contentType: mime.lookup(file.name) };
+        uploadFile(file, metadata);
+        closeModal();
+        this.clearFile();
       }
     }
-  }
+  };
 
-  isAuthorized = filename =>
-    this.state.authorized.includes(mime.lookup(filename))
+  isAuthorized = filename => {
+    //todo : fchange this to allow only a few file types in the future
+    //return true;
+    return this.state.authorized.includes(mime.lookup(filename));
+  };
 
-  clearFile = () => this.setState({ file: null })
+  clearFile = () => this.setState({ file: null });
 
   render() {
-    const { modal, closeModal } = this.props
+    const { modal, closeModal } = this.props;
 
     return (
       <Modal basic open={modal} onClose={closeModal}>
@@ -44,7 +47,7 @@ class FileModal extends React.Component {
           <Input
             onChange={this.addFile}
             fluid
-            label="File types: jpg, png"
+            label="File types: jpg, png, gif"
             name="file"
             type="file"
           />
@@ -58,8 +61,8 @@ class FileModal extends React.Component {
           </Button>
         </Modal.Actions>
       </Modal>
-    )
+    );
   }
 }
 
-export default FileModal
+export default FileModal;

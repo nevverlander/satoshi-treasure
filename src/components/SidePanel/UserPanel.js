@@ -39,27 +39,30 @@ class UserPanel extends React.Component {
 
   render() {
     const { user } = this.state;
-    return (
-      <Grid style={{ background: "#4c3c4c" }}>
-        <Grid.Column>
-          <Grid.Row style={{ padding: "1.2em", margin: 0 }}>
-            {" "}
-            <Header style={{ padding: "0.25em" }} inverted as="h4">
-              <Dropdown
-                trigger={
-                  <span>
-                    <Image src={user.photoURL} spaced="right" avatar />{" "}
-                    {user.displayName}{" "}
-                  </span>
-                }
-                options={this.dropdownOptions()}
-              />{" "}
-            </Header>{" "}
-          </Grid.Row>{" "}
-          {/* User DropDown */}{" "}
-        </Grid.Column>{" "}
-      </Grid>
-    );
+    if (user) {
+      return (
+        <Grid style={{ background: "#4c3c4c" }}>
+          <Grid.Column>
+            <Grid.Row style={{ padding: "1.2em", margin: 0 }}>
+              {" "}
+              <Header style={{ padding: "0.25em" }} inverted as="h4">
+                <Dropdown
+                  trigger={
+                    <span>
+                      <Image src={user.photoURL} spaced="right" avatar />{" "}
+                      {user.displayName}{" "}
+                    </span>
+                  }
+                  options={this.dropdownOptions()}
+                />{" "}
+              </Header>{" "}
+            </Grid.Row>{" "}
+            {/* User DropDown */}{" "}
+          </Grid.Column>{" "}
+        </Grid>
+      );
+    }
+    return null;
   }
 }
 

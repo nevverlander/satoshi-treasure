@@ -20,7 +20,7 @@ class Register extends React.Component {
     passwordConfirmation: "",
     errors: [],
     loading: false,
-    usersRef: firebase.database().ref("users")
+    usersRef: firebase.firestore().collection("users")
   };
 
   isFormEmpty = ({ username, email, password, passwordConfirmation }) => {
@@ -96,12 +96,14 @@ class Register extends React.Component {
         });
     }
   };
+
   saveUser = createdUser => {
-    return this.state.usersRef.child(createdUser.user.uid).set({
+    return this.state.usersRef.doc(createdUser.user.uid).set({
       name: createdUser.user.displayName,
       avatar: createdUser.user.photoURL
     });
   };
+
   displayErrors = errors =>
     errors.map((error, i) => <p key={i}>{error.message}</p>);
   handleInputError = (errors, inputName) => {

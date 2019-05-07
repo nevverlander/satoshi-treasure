@@ -8,7 +8,6 @@ import Message from "./Message";
 
 class Messages extends React.Component {
   state = {
-    messagesRef: firebase.database().ref("messages"),
     messages: [],
     messagesLoading: false,
     channel: this.props.currentChannel,
@@ -20,12 +19,19 @@ class Messages extends React.Component {
     const { channel, user } = this.state;
 
     if (channel && user) {
-      this.addListeners(channel.id);
+      this.setState(
+        {
+          messagesRef: firebase
+            .firestore()
+            .collection("channels")
+            .doc(channel.id)
+            .collection("messages")
+        },
+        () => {
+          this.addListeners(channel.id);
+        }
+      );
     }
-  };
-
-  componentWillUnmount = () => {
-    this.removeListeners();
   };
 
   addListeners = channelId => {
@@ -34,29 +40,19 @@ class Messages extends React.Component {
 
   addMessageListener = channelId => {
     let loadedMessages = [];
-    this.state.messagesRef.child(channelId).on("child_added", snap => {
-      loadedMessages.push(snap.val());
+    this.state.messagesRef.onSnapshot(snap => {
+      snap.docChanges().forEach(function(change) {
+        if (change.type === "added") {
+          //console.log("New message added: ", change.doc.data());
+          loadedMessages.push(change.doc.data());
+        }
+      });
       this.setState({
         messages: loadedMessages,
         messagesLoading: false
       });
     });
   };
-
-  removeListeners = () => {
-    const { messagesRef } = this.state;
-    messagesRef.off();
-  };
-
-  displayMessages = messages =>
-    messages.length > 0 &&
-    messages.map(message => (
-      <Message
-        key={message.timestamp}
-        message={message}
-        user={this.state.user}
-      />
-    ));
 
   isProgressBarVisible = percent => {
     if (percent > 0) {
@@ -75,7 +71,13 @@ class Messages extends React.Component {
           <Comment.Group
             className={progressBar ? "messages__progress" : "messages"}
           >
-            {this.displayMessages(messages)}
+            {messages.map(message => (
+              <Message
+                key={message.timestamp}
+                message={message}
+                user={this.state.user}
+              />
+            ))}
           </Comment.Group>
         </Segment>
 

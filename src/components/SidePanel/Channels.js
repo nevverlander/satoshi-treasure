@@ -11,7 +11,7 @@ class Channels extends React.Component {
     channels: [],
     channelName: "",
     channelDetail: "",
-    channelsRef: firebase.database().ref("channels"),
+    channelsRef: firebase.firestore().collection("channels"),
     modal: false,
     firstLoad: true
   };
@@ -28,15 +28,21 @@ class Channels extends React.Component {
   addListeners = () => {
     let loadedChannels = [];
     const { channelsRef } = this.state;
-    channelsRef.on("child_added", snap => {
-      loadedChannels.push(snap.val());
-      this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
+    this.unsubscribe = channelsRef.onSnapshot(snap => {
+      snap.docChanges().forEach(function(change) {
+        if (change.type === "added") {
+          //console.log("New channel added: ", change.doc.data());
+          loadedChannels.push(change.doc.data());
+        }
+      });
+      this.setState({ channels: loadedChannels }, () => {
+        this.setFirstChannel();
+      });
     });
   };
 
   removeListeners = () => {
-    const { channelsRef } = this.state;
-    channelsRef.off();
+    this.unsubscribe();
   };
 
   handleSubmit = event => {
@@ -52,10 +58,9 @@ class Channels extends React.Component {
 
   addChannel = () => {
     const { channelsRef, channelName, channelDetail, user } = this.state;
-    const key = channelsRef.push().key;
-
+    const newChannelRef = channelsRef.doc();
     const newChannel = {
-      id: key,
+      id: newChannelRef.id,
       name: channelName,
       details: channelDetail,
       createdBy: {
@@ -64,16 +69,15 @@ class Channels extends React.Component {
       }
     };
 
-    channelsRef
-      .child(key)
-      .update(newChannel)
+    newChannelRef
+      .set(newChannel)
       .then(() => {
         this.setState({
           channelName: "",
           channelDetail: ""
         });
         this.closeModal();
-        console.log("channel added");
+        //console.log("Channel added");
       })
       .catch(err => {
         console.error(err);
@@ -90,21 +94,6 @@ class Channels extends React.Component {
       [event.target.name]: event.target.value
     });
   };
-
-  /* view event about channel */
-  displayChannels = channels =>
-    channels.length > 0 &&
-    channels.map(channel => (
-      <Menu.Item
-        key={channel.id}
-        onClick={() => this.changeChannel(channel)}
-        name={channel.name}
-        style={{ opacity: 0.7 }}
-        active={channel.id === this.state.activeChannel}
-      >
-        # {channel.name}
-      </Menu.Item>
-    ));
 
   setFirstChannel = () => {
     const firstChannel = this.state.channels[0];
@@ -133,13 +122,20 @@ class Channels extends React.Component {
       <React.Fragment>
         <Menu.Menu style={{ paddingBottom: "2em" }}>
           <Menu.Item>
-            <span>
-              <Icon name="exchange" /> CHANNELS
-            </span>
-            {""}({channels.length})
+            <span>Keys ({channels.length})</span>
             <Icon name="add" onClick={this.openModal} />
           </Menu.Item>
-          {this.displayChannels(channels)}
+          {channels.map(channel => (
+            <Menu.Item
+              key={channel.id}
+              onClick={() => this.changeChannel(channel)}
+              name={channel.name}
+              style={{ opacity: 0.7 }}
+              active={channel.id === this.state.activeChannel}
+            >
+              {channel.name}
+            </Menu.Item>
+          ))}
         </Menu.Menu>
 
         <Modal basic open={modal} onClose={this.closeModal}>
