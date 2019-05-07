@@ -77,7 +77,7 @@ class Channels extends React.Component {
           channelDetail: ""
         });
         this.closeModal();
-        console.log("channel added");
+        console.log("Channel added");
       })
       .catch(err => {
         console.error(err);
@@ -96,19 +96,20 @@ class Channels extends React.Component {
   };
 
   /* view event about channel */
-  displayChannels = channels =>
+  displayChannels = channels => {
     channels.length > 0 &&
-    channels.map(channel => (
-      <Menu.Item
-        key={channel.id}
-        onClick={() => this.changeChannel(channel)}
-        name={channel.name}
-        style={{ opacity: 0.7 }}
-        active={channel.id === this.state.activeChannel}
-      >
-        # {channel.name}
-      </Menu.Item>
-    ));
+      channels.map(channel => (
+        <Menu.Item
+          key={channel.id}
+          onClick={() => this.changeChannel(channel)}
+          name={channel.name}
+          style={{ opacity: 0.7 }}
+          active={channel.id === this.state.activeChannel}
+        >
+          {channel.name}
+        </Menu.Item>
+      ));
+  };
 
   setFirstChannel = () => {
     const firstChannel = this.state.channels[0];
