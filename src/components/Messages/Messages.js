@@ -34,13 +34,23 @@ class Messages extends React.Component {
     }
   };
 
+  componentWillUnmount = () => {
+    this.removeListeners();
+  };
+
+  removeListeners = () => {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  };
+
   addListeners = channelId => {
     this.addMessageListener(channelId);
   };
 
   addMessageListener = channelId => {
     let loadedMessages = [];
-    this.state.messagesRef.onSnapshot(snap => {
+    this.unsubscribe = this.state.messagesRef.onSnapshot(snap => {
       snap.docChanges().forEach(function(change) {
         if (change.type === "added") {
           //console.log("New message added: ", change.doc.data());
