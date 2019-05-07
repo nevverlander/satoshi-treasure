@@ -8,7 +8,6 @@ import Message from "./Message";
 
 class Messages extends React.Component {
   state = {
-    messagesRef: firebase.firestore().collection("messages"),
     messages: [],
     messagesLoading: false,
     channel: this.props.currentChannel,
@@ -20,7 +19,18 @@ class Messages extends React.Component {
     const { channel, user } = this.state;
 
     if (channel && user) {
-      this.addListeners(channel.id);
+      this.setState(
+        {
+          messagesRef: firebase
+            .firestore()
+            .collection("channels")
+            .doc(channel.id)
+            .collection("messages")
+        },
+        () => {
+          this.addListeners(channel.id);
+        }
+      );
     }
   };
 
@@ -30,25 +40,18 @@ class Messages extends React.Component {
 
   addMessageListener = channelId => {
     let loadedMessages = [];
-    this.state.messagesRef.doc(channelId).onSnapshot(snap => {
-      loadedMessages.push(snap.data());
+    this.state.messagesRef.onSnapshot(snap => {
+      snap.docChanges().forEach(function(change) {
+        if (change.type === "added") {
+          //console.log("New message added: ", change.doc.data());
+          loadedMessages.push(change.doc.data());
+        }
+      });
       this.setState({
         messages: loadedMessages,
         messagesLoading: false
       });
     });
-  };
-
-  displayMessages = messages => {
-    console.log("messages", messages);
-    messages.length > 0 &&
-      messages.map(message => (
-        <Message
-          key={message.timestamp}
-          message={message}
-          user={this.state.user}
-        />
-      ));
   };
 
   isProgressBarVisible = percent => {
@@ -68,7 +71,13 @@ class Messages extends React.Component {
           <Comment.Group
             className={progressBar ? "messages__progress" : "messages"}
           >
-            {this.displayMessages(messages)}
+            {messages.map(message => (
+              <Message
+                key={message.timestamp}
+                message={message}
+                user={this.state.user}
+              />
+            ))}
           </Comment.Group>
         </Segment>
 

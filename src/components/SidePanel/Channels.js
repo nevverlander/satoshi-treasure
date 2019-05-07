@@ -31,7 +31,7 @@ class Channels extends React.Component {
     this.unsubscribe = channelsRef.onSnapshot(snap => {
       snap.docChanges().forEach(function(change) {
         if (change.type === "added") {
-          console.log("New channel added: ", change.doc.data());
+          //console.log("New channel added: ", change.doc.data());
           loadedChannels.push(change.doc.data());
         }
       });
@@ -77,7 +77,7 @@ class Channels extends React.Component {
           channelDetail: ""
         });
         this.closeModal();
-        console.log("Channel added");
+        //console.log("Channel added");
       })
       .catch(err => {
         console.error(err);
@@ -93,22 +93,6 @@ class Channels extends React.Component {
     this.setState({
       [event.target.name]: event.target.value
     });
-  };
-
-  /* view event about channel */
-  displayChannels = channels => {
-    channels.length > 0 &&
-      channels.map(channel => (
-        <Menu.Item
-          key={channel.id}
-          onClick={() => this.changeChannel(channel)}
-          name={channel.name}
-          style={{ opacity: 0.7 }}
-          active={channel.id === this.state.activeChannel}
-        >
-          {channel.name}
-        </Menu.Item>
-      ));
   };
 
   setFirstChannel = () => {
@@ -138,13 +122,20 @@ class Channels extends React.Component {
       <React.Fragment>
         <Menu.Menu style={{ paddingBottom: "2em" }}>
           <Menu.Item>
-            <span>
-              <Icon name="exchange" /> CHANNELS
-            </span>
-            {""}({channels.length})
+            <span>Keys ({channels.length})</span>
             <Icon name="add" onClick={this.openModal} />
           </Menu.Item>
-          {this.displayChannels(channels)}
+          {channels.map(channel => (
+            <Menu.Item
+              key={channel.id}
+              onClick={() => this.changeChannel(channel)}
+              name={channel.name}
+              style={{ opacity: 0.7 }}
+              active={channel.id === this.state.activeChannel}
+            >
+              {channel.name}
+            </Menu.Item>
+          ))}
         </Menu.Menu>
 
         <Modal basic open={modal} onClose={this.closeModal}>

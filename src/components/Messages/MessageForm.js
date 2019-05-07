@@ -27,6 +27,7 @@ class MessageForm extends React.Component {
 
   createMessage = (fileUrl = null) => {
     const message = {
+      //timestamp: firebase.database.ServerValue.TIMESTAMP,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       user: {
         id: this.state.user.uid,
@@ -46,6 +47,7 @@ class MessageForm extends React.Component {
   openModal = () => this.setState({ modal: true });
 
   closeModal = () => this.setState({ modal: false });
+
   /* firebase event*/
   sendMessage = () => {
     const { messagesRef } = this.props;
@@ -56,7 +58,6 @@ class MessageForm extends React.Component {
         loading: true
       });
       messagesRef
-        .doc(channel.id)
         .add(this.createMessage())
         .then(() => {
           this.setState({
@@ -81,7 +82,7 @@ class MessageForm extends React.Component {
   uploadFile = (file, metadata) => {
     const pathToUpload = this.state.channel.id;
     const ref = this.props.messagesRef;
-    const filePath = `chat/public/${uuidv4()}.jpg`;
+    const filePath = `${pathToUpload}/${uuidv4()}`;
 
     this.setState(
       {
@@ -109,7 +110,7 @@ class MessageForm extends React.Component {
             this.state.uploadTask.snapshot.ref
               .getDownloadURL()
               .then(downloadUrl => {
-                this.sendFileMessage(downloadUrl, ref, pathToUpload);
+                this.sendFileMessage(downloadUrl, ref);
               })
               .catch(err => {
                 console.error(err);
@@ -125,13 +126,11 @@ class MessageForm extends React.Component {
     );
   };
 
-  sendFileMessage = (fileUrl, ref, pathToupload) => {
+  sendFileMessage = (fileUrl, ref) => {
     ref
-      .child(pathToupload)
-      .push()
-      .set(this.createMessage(fileUrl))
+      .add(this.createMessage(fileUrl))
       .then(() => {
-        this.setState({ uploadState: "done" });
+        this.setState({ uploadState: "" });
       })
       .catch(err => {
         console.error(err);
