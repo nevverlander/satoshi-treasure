@@ -69,6 +69,7 @@ class MetaPanel extends React.Component {
 						src={this.props.currentChannel.img}
 						width="500"
 						height="500"
+						alt=""
 					/>
 				) : (
 					<div />
