@@ -7,29 +7,34 @@ import Message from "./Message";
 import moment from "moment";
 import MessageForm from "./MessageForm";
 
+require("dotenv").config();
+
 class Messages extends React.Component {
   state = {
     messages: [],
     messagesLoading: false,
     channel: this.props.currentChannel,
     user: this.props.currentUser,
-    progressBar: false
+    progressBar: false,
+    numLoadedMsgs: 300
   };
 
   componentDidMount = () => {
-    const {channel, user} = this.state;
+    const { channel, user } = this.state;
 
     if (channel && user) {
       this.setState(
         {
           messagesRef: firebase
             .firestore()
-            .collection("channels")
-            .doc(channel.id)
-            .collection("messages")
+            .collection(process.env.REACT_APP_FIRESTORE_ROOT_REF)
+            .doc(process.env.REACT_APP_FIRESTORE_CHANNELS_REF)
+            .collection(process.env.REACT_APP_FIRESTORE_KEYS_REF)
+            .doc(channel.name)
+            .collection(process.env.REACT_APP_FIRESTORE_MESSAGES_REF)
         },
         () => {
-          this.addListeners(channel.id);
+          this.addListeners();
         }
       );
     }
@@ -45,29 +50,41 @@ class Messages extends React.Component {
     }
   };
 
-  addListeners = channelId => {
-    this.addMessageListener(channelId);
+  addListeners = () => {
+    this.addMessageListener();
   };
 
-  addMessageListener = channelId => {
+  addMessageListener = () => {
     let loadedMessages = [];
-    this.unsubscribe = this.state.messagesRef.onSnapshot(snap => {
-      snap.docChanges().forEach(function (change) {
-        if (change.type === "added") {
-          //console.log("New message added: ", change.doc.data());
-          loadedMessages.push(change.doc.data());
-        }
+    this.unsubscribe = this.state.messagesRef
+      .orderBy("timestamp", "desc")
+      .limit(this.state.numLoadedMsgs)
+      .onSnapshot(snap => {
+        snap.docChanges().forEach(change => {
+          if (change.type === "added") {
+            //console.log("New message added: ", change.doc.data());
+            if (change.doc.metadata.hasPendingWrites) {
+              loadedMessages.push(change.doc.data());
+            } else {
+              loadedMessages.unshift(change.doc.data());
+            }
+            // limit num elements in array
+            if (loadedMessages.length > this.state.numLoadedMsgs) {
+              let delta = loadedMessages.length - this.state.numLoadedMsgs;
+              loadedMessages = loadedMessages.slice(delta);
+            }
+          }
+        });
+        this.setState({
+          messages: loadedMessages,
+          messagesLoading: false
+        });
       });
-      this.setState({
-        messages: loadedMessages,
-        messagesLoading: false
-      });
-    });
   };
 
   isProgressBarVisible = percent => {
     if (percent > 0) {
-      this.setState({progressBar: true});
+      this.setState({ progressBar: true });
     }
   };
   TimeStamp = ()=>{
@@ -80,7 +97,7 @@ class Messages extends React.Component {
     );
   }
   render() {
-    const {messagesRef, messages, channel, user, progressBar} = this.state;
+    const { messagesRef, messages, channel, user, progressBar } = this.state;
 
     return (
       <React.Fragment>
@@ -93,7 +110,7 @@ class Messages extends React.Component {
             >
               {messages.map(message => (
                 <Message
-                  key={message.timestamp}
+                  key={message.id}
                   message={message}
                   user={this.state.user}
                 />

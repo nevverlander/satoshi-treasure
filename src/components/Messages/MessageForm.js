@@ -50,15 +50,18 @@ class MessageForm extends React.Component {
 
   /* firebase event*/
   sendMessage = () => {
-    const {messagesRef} = this.props;
-    const {message, channel} = this.state;
+    const { messagesRef } = this.props;
+    const { message } = this.state;
 
     if (message) {
       this.setState({
         loading: true
       });
-      messagesRef
-        .add(this.createMessage())
+      let msgDocRef = messagesRef.doc();
+      let msgData = this.createMessage();
+      msgData.id = msgDocRef.id;
+      msgDocRef
+        .set(msgData)
         .then(() => {
           this.setState({
             loading: false,
@@ -79,7 +82,7 @@ class MessageForm extends React.Component {
   };
 
   uploadFile = (file, metadata) => {
-    const pathToUpload = this.state.channel.id;
+    const pathToUpload = this.state.channel.name;
     const ref = this.props.messagesRef;
     const filePath = `${pathToUpload}/${uuidv4()}`;
 
@@ -95,7 +98,7 @@ class MessageForm extends React.Component {
             const percentUploaded = Math.round(
               (snap.bytesTransferred / snap.totalBytes) * 100
             );
-            this.setState({percentUploaded});
+            this.setState({ percentUploaded });
           },
           err => {
             console.error(err);

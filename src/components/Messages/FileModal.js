@@ -5,7 +5,8 @@ import { Modal, Button, Icon, Input } from "semantic-ui-react";
 class FileModal extends React.Component {
   state = {
     file: null,
-    authorized: ["image/jpeg", "image/png", "image/gif"]
+    authorized: ["image/jpeg", "image/png", "image/gif"],
+    maxFileSize: 10 //in MB
   };
 
   addFile = event => {
@@ -20,7 +21,7 @@ class FileModal extends React.Component {
     const { uploadFile, closeModal } = this.props;
 
     if (file !== null) {
-      if (this.isAuthorized(file.name)) {
+      if (this.isAuthorized(file)) {
         const metadata = { contentType: mime.lookup(file.name) };
         uploadFile(file, metadata);
         closeModal();
@@ -29,10 +30,17 @@ class FileModal extends React.Component {
     }
   };
 
-  isAuthorized = filename => {
-    //todo : fchange this to allow only a few file types in the future
-    //return true;
-    return this.state.authorized.includes(mime.lookup(filename));
+  isAuthorized = file => {
+    let size = file.size / 1024 / 1024; //in MB
+    console.log(size);
+    if (size > this.state.maxFileSize) {
+      alert("Max file size is " + this.state.maxFileSize + " MB");
+    }
+    let type = this.state.authorized.includes(mime.lookup(file.name));
+    if (!type) {
+      alert("Supported types are " + JSON.stringify(this.state.authorized));
+    }
+    return size < this.state.maxFileSize && type;
   };
 
   clearFile = () => this.setState({ file: null });
@@ -47,7 +55,7 @@ class FileModal extends React.Component {
           <Input
             onChange={this.addFile}
             fluid
-            label="File types: jpg, png, gif"
+            label="File types: jpg, png, gif; max size 10MB"
             name="file"
             type="file"
           />
