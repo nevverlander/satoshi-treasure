@@ -96,7 +96,7 @@ class Messages extends React.Component {
           >
             {messages.map(message => (
               <Message
-                key={message.timestamp}
+                key={message.id}
                 message={message}
                 user={this.state.user}
               />

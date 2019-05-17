@@ -56,8 +56,11 @@ class MessageForm extends React.Component {
       this.setState({
         loading: true
       });
-      messagesRef
-        .add(this.createMessage())
+      let msgDocRef = messagesRef.doc();
+      let msgData = this.createMessage();
+      msgData.id = msgDocRef.id;
+      msgDocRef
+        .set(msgData)
         .then(() => {
           this.setState({
             loading: false,
