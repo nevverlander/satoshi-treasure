@@ -15,14 +15,17 @@ const App = ({ currentUser, currentChannel }) => (
 
     <Grid.Column style={{ marginLeft: 320 }}>
       <Messages
-        key={currentChannel && currentChannel.id}
+        key={currentChannel && currentChannel.name}
         currentChannel={currentChannel}
         currentUser={currentUser}
       />
     </Grid.Column>
 
     <Grid.Column width={4}>
-      <MetaPanel />
+      <MetaPanel
+        key={currentChannel && currentChannel.name}
+        currentChannel={currentChannel}
+      />
     </Grid.Column>
   </Grid>
 );

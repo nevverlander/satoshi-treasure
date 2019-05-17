@@ -82,7 +82,7 @@ class MessageForm extends React.Component {
   };
 
   uploadFile = (file, metadata) => {
-    const pathToUpload = this.state.channel.id;
+    const pathToUpload = this.state.channel.name;
     const ref = this.props.messagesRef;
     const filePath = `${pathToUpload}/${uuidv4()}`;
 

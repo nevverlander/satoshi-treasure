@@ -101,7 +101,7 @@ class Channels extends React.Component {
               onClick={() => this.changeChannel(channel)}
               name={channel.name}
               style={{ opacity: 0.7 }}
-              active={channel.id === this.state.activeChannel}
+              active={channel.name === this.state.activeChannel}
             >
               {channel.name}
             </Menu.Item>
