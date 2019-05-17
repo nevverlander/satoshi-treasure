@@ -7,8 +7,9 @@ body,
 }
 /* Mesages.js */
 .messages {
-  height: 62vh;
+  height: 74vh;
   overflow-y: scroll;
+  max-width: 100% !important;
 }
 
 .messages__progresss {
@@ -18,12 +19,15 @@ body,
 
 /* MessageForm.js */
 .message__form {
-  position: fixed !important;
+  position: absolute !important;
   bottom: 1em;
-  margin-left: 320px !important;
+  margin-left: 0px;
   left: 0;
   right: 1em;
   z-index: 200;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .message__self {
@@ -34,7 +38,9 @@ body,
 .message__image {
   padding: 1em;
 }
-
+.message__text {
+  color: #222122;
+}
 /* progressBar.js */
 .progress__bar {
   margin: 0.3em 0 0 0 !important;

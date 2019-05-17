@@ -20,7 +20,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import firebase from "./firebase";
 
 import "semantic-ui-css/semantic.min.css";
-
+import 'antd/dist/antd.css';
 const store = createStore(rootReducer, composeWithDevTools());
 
 class Root extends React.Component {

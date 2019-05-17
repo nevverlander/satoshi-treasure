@@ -5,9 +5,9 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "antd": "^3.18.1",
     "dotenv": "^8.0.0",
     "firebase": "latest",
-    "firebase-admin": "^7.3.0",
     "history": "latest",
     "md5": "latest",
     "mime-types": "2.1.21",

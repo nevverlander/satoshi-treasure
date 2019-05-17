@@ -1,8 +1,8 @@
 import React from "react";
 import uuidv4 from "uuid/v4";
-import { Segment, Button, Input } from "semantic-ui-react";
+import {Button, Input} from "semantic-ui-react";
+import {Dropdown, Menu} from 'antd';
 import firebase from "../../firebase";
-
 import FileModal from "./FileModal";
 import ProgressBar from "./ProgressBar";
 
@@ -22,7 +22,8 @@ class MessageForm extends React.Component {
 
   /* form event */
   handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+    console.log("event", event);
+    this.setState({[event.target.name]: event.target.value});
   };
 
   createMessage = (fileUrl = null) => {
@@ -43,14 +44,14 @@ class MessageForm extends React.Component {
   };
 
   /* upload file event */
-  openModal = () => this.setState({ modal: true });
+  openModal = () => this.setState({modal: true});
 
-  closeModal = () => this.setState({ modal: false });
+  closeModal = () => this.setState({modal: false});
 
   /* firebase event*/
   sendMessage = () => {
-    const { messagesRef } = this.props;
-    const { message, channel } = this.state;
+    const {messagesRef} = this.props;
+    const {message, channel} = this.state;
 
     if (message) {
       this.setState({
@@ -61,7 +62,6 @@ class MessageForm extends React.Component {
         .then(() => {
           this.setState({
             loading: false,
-            message: "",
             errors: []
           });
         })
@@ -73,7 +73,7 @@ class MessageForm extends React.Component {
         });
     } else {
       this.setState({
-        errors: this.state.errors.concat({ message: "Add a message" })
+        errors: this.state.errors.concat({message: "Add a message"})
       });
     }
   };
@@ -95,7 +95,7 @@ class MessageForm extends React.Component {
             const percentUploaded = Math.round(
               (snap.bytesTransferred / snap.totalBytes) * 100
             );
-            this.setState({ percentUploaded });
+            this.setState({percentUploaded});
           },
           err => {
             console.error(err);
@@ -129,13 +129,22 @@ class MessageForm extends React.Component {
     ref
       .add(this.createMessage(fileUrl))
       .then(() => {
-        this.setState({ uploadState: "" });
+        this.setState({uploadState: ""});
       })
       .catch(err => {
         console.error(err);
-        this.setState({ errors: this.state.errors.concat(err) });
+        this.setState({errors: this.state.errors.concat(err)});
       });
   };
+  menu = (
+    <Menu>
+      <Menu.Item>
+        <div onClick={this.openModal}>
+          Upload Media
+        </div>
+      </Menu.Item>
+    </Menu>
+  );
 
   render() {
     const {
@@ -148,37 +157,31 @@ class MessageForm extends React.Component {
     } = this.state;
 
     return (
-      <Segment className="message__form">
+      <div className="message__form">
         <Input
           fluid
           name="message"
           onChange={this.handleChange}
           value={message}
-          style={{ marginBottom: "0.7em" }}
-          label={<Button icon={"add"} />}
+          style={{marginBottom: "0.7em"}}
+          label={
+            <Dropdown overlay={this.menu} placement="bottomLeft">
+              <Button icon={"add"}/>
+            </Dropdown>
+          }
           labelPosition="left"
           className={
             errors.some(error => error.includes("message")) ? "error" : ""
           }
+          onKeyPress={(event) => {
+            if (event.key === 'Enter') {
+              console.log('event', event);
+              this.setState({message: ""})
+              this.sendMessage();
+            }
+          }}
           placeholder="Write your message"
         />
-        <Button.Group icon widths="2">
-          <Button
-            color="orange"
-            onClick={this.sendMessage}
-            disabled={loading}
-            content="Add Reply"
-            labelPosition="left"
-            icon="edit"
-          />
-          <Button
-            color="teal"
-            onClick={this.openModal}
-            content="Upload Media"
-            labelPosition="right"
-            icon="cloud upload"
-          />
-        </Button.Group>
         <FileModal
           modal={modal}
           closeModal={this.closeModal}
@@ -188,7 +191,7 @@ class MessageForm extends React.Component {
           uploadState={uploadState}
           percentUploaded={percentUploaded}
         />
-      </Segment>
+      </div>
     );
   }
 }

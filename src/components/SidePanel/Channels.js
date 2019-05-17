@@ -1,10 +1,13 @@
 import React from "react";
 import firebase from "../../firebase";
-import { connect } from "react-redux";
-import { setCurrentChannel } from "../../actions";
-import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
+import {connect} from "react-redux";
+import {setCurrentChannel} from "../../actions";
+import {Button, Form, Icon, Input, Menu, Modal} from "semantic-ui-react";
 
 class Channels extends React.Component {
+  constructor(props){
+    super(props);
+  }
   state = {
     activeChannel: "",
     user: this.props.currentUser,
@@ -27,15 +30,15 @@ class Channels extends React.Component {
 
   addListeners = () => {
     let loadedChannels = [];
-    const { channelsRef } = this.state;
+    const {channelsRef} = this.state;
     this.unsubscribe = channelsRef.onSnapshot(snap => {
-      snap.docChanges().forEach(function(change) {
+      snap.docChanges().forEach(function (change) {
         if (change.type === "added") {
           //console.log("New channel added: ", change.doc.data());
           loadedChannels.push(change.doc.data());
         }
       });
-      this.setState({ channels: loadedChannels }, () => {
+      this.setState({channels: loadedChannels}, () => {
         this.setFirstChannel();
       });
     });
@@ -53,11 +56,11 @@ class Channels extends React.Component {
   };
 
   /* form event */
-  isFormValid = ({ channelName, channelDetail }) =>
+  isFormValid = ({channelName, channelDetail}) =>
     channelName && channelDetail;
 
   addChannel = () => {
-    const { channelsRef, channelName, channelDetail, user } = this.state;
+    const {channelsRef, channelName, channelDetail, user} = this.state;
     const newChannelRef = channelsRef.doc();
     const newChannel = {
       id: newChannelRef.id,
@@ -85,9 +88,9 @@ class Channels extends React.Component {
   };
 
   /* view event about form */
-  closeModal = () => this.setState({ modal: false });
+  closeModal = () => this.setState({modal: false});
 
-  openModal = () => this.setState({ modal: true });
+  openModal = () => this.setState({modal: true});
 
   handleChange = event => {
     this.setState({
@@ -101,7 +104,7 @@ class Channels extends React.Component {
       this.props.setCurrentChannel(firstChannel);
       this.setActiveChannel(firstChannel);
     }
-    this.setState({ firstLoad: false });
+    this.setState({firstLoad: false});
   };
 
   changeChannel = channel => {
@@ -116,24 +119,32 @@ class Channels extends React.Component {
   };
 
   render() {
-    const { channels, modal } = this.state;
+    const {channels, modal} = this.state;
 
     return (
       <React.Fragment>
-        <Menu.Menu style={{ paddingBottom: "2em" }}>
-          <Menu.Item>
-            <span>Keys ({channels.length})</span>
-            <Icon name="add" onClick={this.openModal} />
+        <Menu.Menu style={{paddingBottom: "2em"}}>
+          <Menu.Item
+            style={{color: '#49525d'}}
+          >
+            <span>Channels ({channels.length})</span>
+            <Icon name="add" onClick={this.openModal}/>
           </Menu.Item>
           {channels.map(channel => (
             <Menu.Item
               key={channel.id}
               onClick={() => this.changeChannel(channel)}
               name={channel.name}
-              style={{ opacity: 0.7 }}
+              style={{
+                color: '#49525d', borderRadius: 10,
+                paddingTop: 13,
+                paddingBottom: 13,
+                marginTop: 10
+              }}
+              color={'blue'}
               active={channel.id === this.state.activeChannel}
             >
-              {channel.name}
+              # {channel.name}
             </Menu.Item>
           ))}
         </Menu.Menu>
@@ -163,11 +174,11 @@ class Channels extends React.Component {
 
           <Modal.Actions>
             <Button color="green" inverted onClick={this.handleSubmit}>
-              <Icon name="checkmark" />
+              <Icon name="checkmark"/>
               Add
             </Button>
             <Button color="red" inverted onClick={this.closeModal}>
-              <Icon name="remove" />
+              <Icon name="remove"/>
               Cancel
             </Button>
           </Modal.Actions>
@@ -179,5 +190,5 @@ class Channels extends React.Component {
 
 export default connect(
   null,
-  { setCurrentChannel }
+  {setCurrentChannel}
 )(Channels);

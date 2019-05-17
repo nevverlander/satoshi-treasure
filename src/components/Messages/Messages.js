@@ -1,10 +1,11 @@
 import React from "react";
-import { Segment, Comment } from "semantic-ui-react";
+import {Comment} from "semantic-ui-react";
 import firebase from "../../firebase";
 
 import MessagesHeader from "./MessagesHeader";
-import MessageForm from "./MessageForm";
 import Message from "./Message";
+import moment from "moment";
+import MessageForm from "./MessageForm";
 
 class Messages extends React.Component {
   state = {
@@ -16,7 +17,7 @@ class Messages extends React.Component {
   };
 
   componentDidMount = () => {
-    const { channel, user } = this.state;
+    const {channel, user} = this.state;
 
     if (channel && user) {
       this.setState(
@@ -51,7 +52,7 @@ class Messages extends React.Component {
   addMessageListener = channelId => {
     let loadedMessages = [];
     this.unsubscribe = this.state.messagesRef.onSnapshot(snap => {
-      snap.docChanges().forEach(function(change) {
+      snap.docChanges().forEach(function (change) {
         if (change.type === "added") {
           //console.log("New message added: ", change.doc.data());
           loadedMessages.push(change.doc.data());
@@ -66,31 +67,40 @@ class Messages extends React.Component {
 
   isProgressBarVisible = percent => {
     if (percent > 0) {
-      this.setState({ progressBar: true });
+      this.setState({progressBar: true});
     }
   };
-
+  TimeStamp = ()=>{
+    return(
+      <div style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center'}}>
+        <div style={styles.divider}/>
+        <div style={{marginLeft: 10, marginRight: 10}}>{moment().format("dddd, MMMM Do YYYY")}</div>
+        <div style={styles.divider}/>
+      </div>
+    );
+  }
   render() {
-    const { messagesRef, messages, channel, user, progressBar } = this.state;
+    const {messagesRef, messages, channel, user, progressBar} = this.state;
 
     return (
       <React.Fragment>
-        <MessagesHeader />
-
-        <Segment>
-          <Comment.Group
-            className={progressBar ? "messages__progress" : "messages"}
-          >
-            {messages.map(message => (
-              <Message
-                key={message.timestamp}
-                message={message}
-                user={this.state.user}
-              />
-            ))}
-          </Comment.Group>
-        </Segment>
-
+        <div style={{display: 'flex', flexDirection: 'column',width: '100%'}}>
+          <MessagesHeader channel={channel}/>
+          {this.TimeStamp()}
+          <div>
+            <Comment.Group
+              className={progressBar ? "messages__progress" : "messages"}
+            >
+              {messages.map(message => (
+                <Message
+                  key={message.timestamp}
+                  message={message}
+                  user={this.state.user}
+                />
+              ))}
+            </Comment.Group>
+          </div>
+        </div>
         <MessageForm
           messagesRef={messagesRef}
           currentChannel={channel}
@@ -102,4 +112,11 @@ class Messages extends React.Component {
   }
 }
 
+const styles = {
+  divider: {
+    backgroundColor: '#e7e7e7',
+    height: 1,
+    width: '36%'
+  }
+};
 export default Messages;
