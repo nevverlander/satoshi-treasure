@@ -1,5 +1,4 @@
 import React from "react";
-import mamoru from "./img/mamoru.png";
 import firebase from "../../firebase";
 
 class MetaPanel extends React.Component {

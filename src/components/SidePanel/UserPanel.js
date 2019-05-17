@@ -1,6 +1,6 @@
 import React from "react";
 import firebase from "../../firebase";
-import { Grid, Header, Icon, Dropdown, Image } from "semantic-ui-react";
+import { Grid, Header, Dropdown, Image } from "semantic-ui-react";
 
 class UserPanel extends React.Component {
   state = {

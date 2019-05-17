@@ -50,7 +50,7 @@ class MessageForm extends React.Component {
   /* firebase event*/
   sendMessage = () => {
     const { messagesRef } = this.props;
-    const { message, channel } = this.state;
+    const { message } = this.state;
 
     if (message) {
       this.setState({

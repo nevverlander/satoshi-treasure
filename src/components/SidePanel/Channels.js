@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import { setCurrentChannel } from "../../actions";
-import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
+import { Menu } from "semantic-ui-react";
 require("dotenv").config();
 
 class Channels extends React.Component {
@@ -87,7 +87,7 @@ class Channels extends React.Component {
   };
 
   render() {
-    const { channels, modal } = this.state;
+    const { channels } = this.state;
 
     return (
       <React.Fragment>
