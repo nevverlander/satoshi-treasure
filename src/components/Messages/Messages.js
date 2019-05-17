@@ -12,7 +12,8 @@ class Messages extends React.Component {
     messagesLoading: false,
     channel: this.props.currentChannel,
     user: this.props.currentUser,
-    progressBar: false
+    progressBar: false,
+    numLoadedMsgs: 300
   };
 
   componentDidMount = () => {
@@ -50,18 +51,30 @@ class Messages extends React.Component {
 
   addMessageListener = channelId => {
     let loadedMessages = [];
-    this.unsubscribe = this.state.messagesRef.onSnapshot(snap => {
-      snap.docChanges().forEach(function(change) {
-        if (change.type === "added") {
-          //console.log("New message added: ", change.doc.data());
-          loadedMessages.push(change.doc.data());
-        }
+    this.unsubscribe = this.state.messagesRef
+      .orderBy("timestamp", "desc")
+      .limit(this.state.numLoadedMsgs)
+      .onSnapshot(snap => {
+        snap.docChanges().forEach(change => {
+          if (change.type === "added") {
+            //console.log("New message added: ", change.doc.data());
+            if (change.doc.metadata.hasPendingWrites) {
+              loadedMessages.push(change.doc.data());
+            } else {
+              loadedMessages.unshift(change.doc.data());
+            }
+            // limit num elements in array
+            if (loadedMessages.length > this.state.numLoadedMsgs) {
+              let delta = loadedMessages.length - this.state.numLoadedMsgs;
+              loadedMessages = loadedMessages.slice(delta);
+            }
+          }
+        });
+        this.setState({
+          messages: loadedMessages,
+          messagesLoading: false
+        });
       });
-      this.setState({
-        messages: loadedMessages,
-        messagesLoading: false
-      });
-    });
   };
 
   isProgressBarVisible = percent => {
