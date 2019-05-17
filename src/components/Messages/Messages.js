@@ -6,6 +6,8 @@ import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import Message from "./Message";
 
+require("dotenv").config();
+
 class Messages extends React.Component {
   state = {
     messages: [],
@@ -24,12 +26,14 @@ class Messages extends React.Component {
         {
           messagesRef: firebase
             .firestore()
-            .collection("channels")
-            .doc(channel.id)
-            .collection("messages")
+            .collection(process.env.REACT_APP_FIRESTORE_ROOT_REF)
+            .doc(process.env.REACT_APP_FIRESTORE_CHANNELS_REF)
+            .collection(process.env.REACT_APP_FIRESTORE_KEYS_REF)
+            .doc(channel.name)
+            .collection(process.env.REACT_APP_FIRESTORE_MESSAGES_REF)
         },
         () => {
-          this.addListeners(channel.id);
+          this.addListeners();
         }
       );
     }
@@ -45,11 +49,11 @@ class Messages extends React.Component {
     }
   };
 
-  addListeners = channelId => {
-    this.addMessageListener(channelId);
+  addListeners = () => {
+    this.addMessageListener();
   };
 
-  addMessageListener = channelId => {
+  addMessageListener = () => {
     let loadedMessages = [];
     this.unsubscribe = this.state.messagesRef
       .orderBy("timestamp", "desc")

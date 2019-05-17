@@ -3,6 +3,7 @@ import firebase from "../../firebase";
 import { connect } from "react-redux";
 import { setCurrentChannel } from "../../actions";
 import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
+require("dotenv").config();
 
 class Channels extends React.Component {
   state = {
@@ -11,14 +12,24 @@ class Channels extends React.Component {
     channels: [],
     channelName: "",
     channelDetail: "",
-    channelsRef: firebase.firestore().collection("channels"),
     modal: false,
     firstLoad: true
   };
 
   /* about listeners for firebase */
   componentDidMount = () => {
-    this.addListeners();
+    this.setState(
+      {
+        channelsRef: firebase
+          .firestore()
+          .collection(process.env.REACT_APP_FIRESTORE_ROOT_REF)
+          .doc(process.env.REACT_APP_FIRESTORE_CHANNELS_REF)
+          .collection(process.env.REACT_APP_FIRESTORE_KEYS_REF)
+      },
+      () => {
+        this.addListeners();
+      }
+    );
   };
 
   componentWillUnmount = () => {
@@ -31,7 +42,6 @@ class Channels extends React.Component {
     this.unsubscribe = channelsRef.onSnapshot(snap => {
       snap.docChanges().forEach(function(change) {
         if (change.type === "added") {
-          //console.log("New channel added: ", change.doc.data());
           loadedChannels.push(change.doc.data());
         }
       });
@@ -72,7 +82,7 @@ class Channels extends React.Component {
 
   setActiveChannel = channel => {
     this.setState({
-      activeChannel: channel.id
+      activeChannel: channel.name
     });
   };
 
@@ -87,7 +97,7 @@ class Channels extends React.Component {
           </Menu.Item>
           {channels.map(channel => (
             <Menu.Item
-              key={channel.id}
+              key={channel.name}
               onClick={() => this.changeChannel(channel)}
               name={channel.name}
               style={{ opacity: 0.7 }}
