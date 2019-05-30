@@ -20,7 +20,7 @@ class Messages extends React.Component {
   };
 
   componentDidMount = () => {
-    const { channel, user } = this.state;
+    const {channel, user} = this.state;
 
     if (channel && user) {
       this.setState(
@@ -84,24 +84,25 @@ class Messages extends React.Component {
 
   isProgressBarVisible = percent => {
     if (percent > 0) {
-      this.setState({ progressBar: true });
+      this.setState({progressBar: true});
     }
   };
-  TimeStamp = ()=>{
-    return(
+  TimeStamp = () => {
+    return (
       <div style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center'}}>
         <div style={styles.divider}/>
-        <div style={{marginLeft: 10, marginRight: 10}}>{moment().format("dddd, MMMM Do YYYY")}</div>
+        <div style={{width: '20%', textAlign: 'center', fontSize: 12}}>{moment().format("dddd, MMMM Do YYYY")}</div>
         <div style={styles.divider}/>
       </div>
     );
   }
+
   render() {
-    const { messagesRef, messages, channel, user, progressBar } = this.state;
+    const {messagesRef, messages, channel, user, progressBar} = this.state;
 
     return (
       <React.Fragment>
-        <div style={{display: 'flex', flexDirection: 'column',width: '100%'}}>
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
           <MessagesHeader channel={channel}/>
           {this.TimeStamp()}
           <div>
@@ -133,7 +134,7 @@ const styles = {
   divider: {
     backgroundColor: '#e7e7e7',
     height: 1,
-    width: '36%'
+    width: '40%'
   }
 };
 export default Messages;

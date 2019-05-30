@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
+import RegisterOptions from "./components/Auth/RegisterOptions";
 import Spinner from "./Spinner";
 import {
   BrowserRouter as Router,
@@ -42,6 +43,7 @@ class Root extends React.Component {
       <Switch>
         <Route exact path="/" component={App} />
         <Route path="/login" component={Login} />
+        <Route path="/rgOptions" component={RegisterOptions} />
         <Route path="/register" component={Register} />
       </Switch>
     );

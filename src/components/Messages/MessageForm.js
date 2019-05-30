@@ -168,9 +168,7 @@ class MessageForm extends React.Component {
           value={message}
           style={{marginBottom: "0.7em"}}
           label={
-            <Dropdown overlay={this.menu} placement="bottomLeft">
-              <Button icon={"add"}/>
-            </Dropdown>
+            <Button icon={"add"} onClick={this.openModal}/>
           }
           labelPosition="left"
           className={

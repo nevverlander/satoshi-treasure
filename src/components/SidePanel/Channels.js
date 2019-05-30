@@ -24,9 +24,13 @@ class Channels extends React.Component {
       {
         channelsRef: firebase
           .firestore()
-          .collection(process.env.REACT_APP_FIRESTORE_ROOT_REF)
+          /*.collection(process.env.REACT_APP_FIRESTORE_ROOT_REF)
           .doc(process.env.REACT_APP_FIRESTORE_CHANNELS_REF)
-          .collection(process.env.REACT_APP_FIRESTORE_KEYS_REF)
+          .collection(process.env.REACT_APP_FIRESTORE_KEYS_REF)*/
+
+          .collection("channels")
+          .doc("xolQV0Q6FqTRlNEgbfNc")
+          .collection("messages")
       },
       () => {
         this.addListeners();

@@ -15,7 +15,7 @@ class MessagesHeader extends React.Component {
           <span>
             {this.props.channel ? `# ${this.props.channel.name}` : ''}
           </span>
-          <Header.Subheader>
+          {/*<Header.Subheader>
             <Icon size={'small'} name={"star outline"} color="grey"/>
             <span style={styles.subheaderSpan}>|</span>
             <Icon size={'small'} name={"user outline"} color="grey"/>
@@ -23,12 +23,12 @@ class MessagesHeader extends React.Component {
             <span style={styles.subheaderSpan}>|</span>
             <Icon size={'small'} name={"pin"} color="grey"/>
             <span style={styles.subheaderText}>28</span>
-          </Header.Subheader>
+          </Header.Subheader>*/}
         </Header>
 
         {/* channel search input */}
         <Header as="h5" floated="right">
-          <Icon style={styles.rightHeaderIcon} size={'tiny'} name={"call"} color="grey"/>
+          {/*<Icon style={styles.rightHeaderIcon} size={'tiny'} name={"call"} color="grey"/>
           <Icon style={styles.rightHeaderIcon} size={'tiny'} name={"info circle"} color="grey"/>
           <Icon style={styles.rightHeaderIcon} size={'tiny'} name={"setting"} color="grey"/>
           <Input
@@ -38,7 +38,7 @@ class MessagesHeader extends React.Component {
             placeholder="search Messages"
           />
           <Icon style={styles.rightHeaderIcon} size={'tiny'} name={"at"} color="grey"/>
-          <Icon style={styles.rightHeaderIcon} size={'tiny'} name={"star outline"} color="grey"/>
+          <Icon style={styles.rightHeaderIcon} size={'tiny'} name={"star outline"} color="grey"/>*/}
         </Header>
       </div>
     )

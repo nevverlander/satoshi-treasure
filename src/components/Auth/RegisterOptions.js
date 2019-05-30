@@ -3,6 +3,7 @@ import firebase from "../../firebase";
 import md5 from "md5";
 import {Button, Form, Grid, Header, Icon, Message, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
+import {FacebookLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 
 class Register extends React.Component {
   state = {
@@ -125,62 +126,22 @@ class Register extends React.Component {
           </Header>
           <Form onSubmit={this.handleSubmit} size="large">
             <Segment stacked padded raised>
-              <Form.Input
-                fluid
-                name="username"
-                icon="user"
-                iconPosition="left"
-                placeholder="Username"
-                value={username}
-                onChange={this.handleChange}
-                type="text"
-              />
-
-              <Form.Input
-                fluid
-                name="email"
-                icon="mail"
-                iconPosition="left"
-                placeholder="Email Address"
-                value={email}
-                onChange={this.handleChange}
-                className={this.handleInputError(errors, "email")}
-                type="email"
-              />
-
-              <Form.Input
-                fluid
-                name="password"
-                icon="lock"
-                iconPosition="left"
-                placeholder="Password"
-                value={password}
-                onChange={this.handleChange}
-                className={this.handleInputError(errors, "password")}
-                type="password"
-              />
-
-              <Form.Input
-                fluid
-                name="passwordConfirmation"
-                icon="repeat"
-                iconPosition="left"
-                placeholder="Password Confirmation"
-                value={passwordConfirmation}
-                onChange={this.handleChange}
-                className={this.handleInputError(errors, "password")}
-                type="password"
-              />
-
-              <Button
-                disabled={loading}
-                className={loading ? "loading" : ""}
-                color="google plus"
-                fluid
-                size="large"
-              >
-                Submit
-              </Button>
+              <FacebookLoginButton onClick={() => alert("Hello")}/>
+              <GoogleLoginButton onClick={() => alert("Hello")} style={{marginTop: 20}}/>
+              <div style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', marginTop: 10}}>
+                <div style={styles.divider}/>
+                <div style={{width: '20%', textAlign: 'center', fontSize: 12}}>OR</div>
+                <div style={styles.divider}/>
+              </div>
+              <Link to="/register">
+                <Button
+                  color="google plus"
+                  fluid
+                  size="large"
+                >
+                  <Icon name='mail'/>Register with Email
+                </Button>
+              </Link>
               <div style={{marginTop: 20}}>Already a user? <Link to="/login">Login</Link></div>
             </Segment>
           </Form>
@@ -190,11 +151,18 @@ class Register extends React.Component {
               {this.displayErrors(errors)}
             </Message>
           )}
-
         </Grid.Column>
       </Grid>
     );
   }
 }
+
+const styles = {
+  divider: {
+    backgroundColor: '#e7e7e7',
+    height: 1,
+    width: '40%'
+  }
+};
 
 export default Register;
